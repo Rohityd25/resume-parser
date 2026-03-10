@@ -5,7 +5,7 @@
 
 const { v4: uuidv4 } = require("uuid");
 const { parseJobDescription } = require("./parsers/jdParser");
-const db = require("./db/database");
+const { initDB, saveJD } = require("./db/database");
 
 const SAMPLE_JDS = [
     {
@@ -99,20 +99,26 @@ CTC: ₹18,00,000 per annum`,
     },
 ];
 
-console.log("🌱 Seeding database with sample job descriptions...\n");
+async function seed() {
+    await initDB();
 
-SAMPLE_JDS.forEach((item) => {
-    const parsed = parseJobDescription(item.text, item.jobId);
-    const id = uuidv4();
-    db.saveJD(id, parsed, item.text, `sample-${item.jobId}.txt`);
+    console.log("🌱 Seeding database with sample job descriptions...\n");
 
-    console.log(`  ✅ ${item.jobId}: ${parsed.role}`);
-    console.log(`     Salary: ${parsed.salary || "N/A"}`);
-    console.log(`     Experience: ${parsed.experience || "N/A"}`);
-    console.log(`     Required Skills: ${parsed.requiredSkills.join(", ")}`);
-    console.log(`     Optional Skills: ${parsed.optionalSkills.join(", ") || "None"}`);
-    console.log();
-});
+    for (const item of SAMPLE_JDS) {
+        const parsed = parseJobDescription(item.text, item.jobId);
+        const id = uuidv4();
+        saveJD(id, parsed, item.text, `sample-${item.jobId}.txt`);
 
-console.log(`✅ Seeded ${SAMPLE_JDS.length} job descriptions.`);
-console.log("   Run 'npm start' or 'npm run dev' to start the server.\n");
+        console.log(`  ✅ ${item.jobId}: ${parsed.role}`);
+        console.log(`     Salary: ${parsed.salary || "N/A"}`);
+        console.log(`     Experience: ${parsed.experience || "N/A"}`);
+        console.log(`     Required Skills: ${parsed.requiredSkills.join(", ")}`);
+        console.log(`     Optional Skills: ${parsed.optionalSkills.join(", ") || "None"}`);
+        console.log();
+    }
+
+    console.log(`✅ Seeded ${SAMPLE_JDS.length} job descriptions.`);
+    console.log("   Run 'npm start' or 'npm run dev' to start the server.\n");
+}
+
+seed().catch(console.error);

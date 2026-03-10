@@ -66,10 +66,8 @@ assert("Education found", parsedResume.education.length > 0);
 assert("LinkedIn found", parsedResume.linkedin !== null);
 assert("GitHub found", parsedResume.github !== null);
 
-console.log(`\n  Parsed Resume: ${JSON.stringify(parsedResume, null, 2).substring(0, 300)}...\n`);
-
 // ─── Test 2: JD Parsing ────────────────────────────────────
-console.log("\n💼 Test 2: JD Parsing\n");
+console.log("\n\n💼 Test 2: JD Parsing\n");
 
 const sampleJD = `
 Backend Developer
@@ -98,10 +96,8 @@ assert("Java in JD skills", parsedJD.allSkills.includes("Java"));
 assert("Kafka in JD skills", parsedJD.allSkills.includes("Kafka"));
 assert("About role extracted", parsedJD.aboutRole && parsedJD.aboutRole.length > 10);
 
-console.log(`\n  Parsed JD: ${JSON.stringify(parsedJD, null, 2).substring(0, 300)}...\n`);
-
 // ─── Test 3: Matching ──────────────────────────────────────
-console.log("\n🎯 Test 3: Matching\n");
+console.log("\n\n🎯 Test 3: Matching\n");
 
 const matchResult = matchResumeToJD(parsedResume, parsedJD);
 
@@ -112,25 +108,12 @@ assert("Score > 0 (resume has matching skills)", matchResult.matchingScore > 0);
 assert("Java is matched", matchResult.skillsAnalysis.find((s) => s.skill === "Java")?.presentInResume === true);
 
 console.log(`  Matching Score: ${matchResult.matchingScore}%`);
-console.log(`  Matched: ${matchResult.matchedSkillsCount}/${matchResult.totalJDSkills} skills`);
-console.log(`  Skills Analysis: ${JSON.stringify(matchResult.skillsAnalysis)}\n`);
 
 // ─── Test 4: Multi-JD Matching ─────────────────────────────
-console.log("\n📊 Test 4: Multi-JD Matching\n");
+console.log("\n\n📊 Test 4: Multi-JD Matching\n");
 
-const jd2 = parseJobDescription(`
-Frontend Developer
-Required Skills: React, Vue.js, Angular, TypeScript, CSS, HTML, Figma, Jest
-Experience: 2+ years
-Salary: 8 LPA
-`, "JD002");
-
-const jd3 = parseJobDescription(`
-Python Data Engineer
-Required Skills: Python, Pandas, NumPy, Apache Spark, Hadoop, TensorFlow, Scikit-learn
-Experience: 3+ years
-Salary: 15 LPA
-`, "JD003");
+const jd2 = parseJobDescription("Frontend Developer\nRequired Skills: React, Vue.js, Angular, TypeScript, CSS, HTML, Figma, Jest\nExperience: 2+ years\nSalary: 8 LPA", "JD002");
+const jd3 = parseJobDescription("Python Data Engineer\nRequired Skills: Python, Pandas, NumPy, Apache Spark, Hadoop, TensorFlow, Scikit-learn\nExperience: 3+ years\nSalary: 15 LPA", "JD003");
 
 const multiResults = matchResumeToMultipleJDs(parsedResume, [parsedJD, jd2, jd3]);
 
@@ -152,10 +135,8 @@ assert("Output has matchingJobs array", Array.isArray(output.matchingJobs));
 assert("Each job has matchingScore", output.matchingJobs.every((j) => typeof j.matchingScore === "number"));
 assert("Each job has skillsAnalysis", output.matchingJobs.every((j) => Array.isArray(j.skillsAnalysis)));
 
-console.log(`\n  Final Output JSON:\n${JSON.stringify(output, null, 2)}\n`);
-
 // ─── Test 6: Edge Cases ────────────────────────────────────
-console.log("\n⚡ Test 6: Edge Cases\n");
+console.log("\n\n⚡ Test 6: Edge Cases\n");
 
 const emptyResume = parseResume("");
 assert("Empty resume returns name 'Unknown'", emptyResume.name === "Unknown");
