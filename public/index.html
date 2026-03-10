@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeIQ — AI-Free Resume Parser & Job Matcher</title>
+  <meta name="description" content="Rule-based resume parsing and job matching system. Upload resumes, add job descriptions, and instantly see skill matches and compatibility scores. No AI/LLMs used." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ─── Animated Background ─────────────────────────────────── -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- ─── Top Navigation ──────────────────────────────────────── -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="2" width="24" height="28" rx="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="9" y1="10" x2="23" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="9" y1="15" x2="20" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="9" y1="20" x2="17" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="22" cy="22" r="6" fill="currentColor" opacity="0.2"/>
+            <path d="M20 22l1.5 1.5L24 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="logo-text">Resume<span class="logo-accent">IQ</span></span>
+      </div>
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-tab="dashboard" id="nav-dashboard">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-tab" data-tab="resumes" id="nav-resumes">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          Resumes
+        </button>
+        <button class="nav-tab" data-tab="jobs" id="nav-jobs">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm-3 8.57A24.95 24.95 0 0010 15c1.757 0 3.462-.225 5.083-.643V17a2 2 0 01-2 2H7a2 2 0 01-2-2v-4.43z" clip-rule="evenodd"/></svg>
+          Job Descriptions
+        </button>
+        <button class="nav-tab" data-tab="match" id="nav-match">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Match & Analyze
+        </button>
+      </nav>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        No LLMs • Rule-Based
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main Content ────────────────────────────────────────── -->
+  <main class="main" id="main">
+
+    <!-- ═══ DASHBOARD TAB ═══ -->
+    <section class="tab-content active" id="tab-dashboard">
+      <div class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="hero-badge">100% Rule-Based</span>
+            Smart Resume Parsing<br/>
+            <span class="gradient-text">& Job Matching</span>
+          </h1>
+          <p class="hero-subtitle">
+            Upload resumes, add job descriptions, and instantly discover skill matches
+            with accurate compatibility scores. Powered by traditional NLP — no AI black boxes.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" onclick="switchTab('resumes')" id="btn-get-started">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+              Upload Resume
+            </button>
+            <button class="btn btn-outline btn-lg" onclick="switchTab('jobs')" id="btn-add-jd">
+              Add Job Description
+            </button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="floating-card card-1">
+            <div class="fc-icon">📄</div>
+            <div class="fc-text">Resume Parsed</div>
+            <div class="fc-score">12 Skills Found</div>
+          </div>
+          <div class="floating-card card-2">
+            <div class="fc-icon">✅</div>
+            <div class="fc-text">Skills Matched</div>
+            <div class="fc-score score-high">85% Match</div>
+          </div>
+          <div class="floating-card card-3">
+            <div class="fc-icon">💼</div>
+            <div class="fc-text">Backend Dev</div>
+            <div class="fc-score">Best Fit</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-resumes">0</span>
+            <span class="stat-label">Resumes Parsed</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-jds">0</span>
+            <span class="stat-label">Job Descriptions</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-matches">0</span>
+            <span class="stat-label">Matches Made</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-avg-score">—</span>
+            <span class="stat-label">Avg. Match Score</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Three simple steps to smarter hiring decisions</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3>Upload Resumes</h3>
+          <p>Upload PDF, DOCX, or paste text. Our parser extracts skills, experience, education, and contact info using pattern matching.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3>Add Job Descriptions</h3>
+          <p>Add JDs with required skills, salary, and experience. The system categorizes required vs optional skills automatically.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3>Match & Analyze</h3>
+          <p>Get instant skill-by-skill analysis with percentage scores. See which skills match and which are missing at a glance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ RESUMES TAB ═══ -->
+    <section class="tab-content" id="tab-resumes">
+      <div class="section-header">
+        <h2>📄 Resume Management</h2>
+        <p>Upload and parse resumes to extract structured information</p>
+      </div>
+
+      <div class="upload-section">
+        <div class="upload-area" id="resume-upload-area">
+          <div class="upload-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M28 8H12a4 4 0 0 0-4 4v24a4 4 0 0 0 4 4h24a4 4 0 0 0 4-4V20L28 8Z"/>
+              <polyline points="28 8 28 20 40 20"/>
+              <line x1="24" y1="26" x2="24" y2="36"/>
+              <polyline points="19 31 24 26 29 31"/>
+            </svg>
+          </div>
+          <h3>Drop Resume Here</h3>
+          <p>or click to browse • PDF, DOCX, TXT supported (max 10MB)</p>
+          <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc,.txt" hidden />
+        </div>
+
+        <div class="divider-text">OR</div>
+
+        <div class="text-input-section">
+          <h3>Paste Resume Text</h3>
+          <textarea id="resume-text-input" class="textarea" placeholder="Paste resume content here...
+
+Example:
+John Doe
+john@email.com | +91 98765 43210
+
+Summary: Full Stack Developer with 4 years of experience in Java, Spring Boot, React, and MySQL.
+
+Skills: Java, Spring Boot, React, MySQL, Docker, Git, REST API, MongoDB..."></textarea>
+          <button class="btn btn-primary" onclick="parseResumeText()" id="btn-parse-resume-text">Parse Resume Text</button>
+        </div>
+      </div>
+
+      <!-- Parsed Resumes List -->
+      <div class="section-header" style="margin-top: 3rem;">
+        <h2>Parsed Resumes</h2>
+        <button class="btn btn-ghost" onclick="loadResumes()" id="btn-refresh-resumes">↻ Refresh</button>
+      </div>
+      <div class="cards-grid" id="resumes-list">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p>No resumes uploaded yet. Upload or paste a resume above to get started.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ JOB DESCRIPTIONS TAB ═══ -->
+    <section class="tab-content" id="tab-jobs">
+      <div class="section-header">
+        <h2>💼 Job Descriptions</h2>
+        <p>Add job descriptions to match against resumes</p>
+      </div>
+
+      <div class="upload-section">
+        <div class="upload-area" id="jd-upload-area">
+          <div class="upload-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="6" y="10" width="36" height="28" rx="3"/>
+              <path d="M18 28V18h-4l10-10 10 10h-4v10H18z" fill="currentColor" opacity="0.15"/>
+              <path d="M6 18h36"/>
+            </svg>
+          </div>
+          <h3>Drop JD File Here</h3>
+          <p>or click to browse • PDF, DOCX, TXT supported</p>
+          <input type="file" id="jd-file-input" accept=".pdf,.docx,.doc,.txt" hidden />
+        </div>
+
+        <div class="divider-text">OR</div>
+
+        <div class="text-input-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jd-id-input">Job ID</label>
+              <input type="text" id="jd-id-input" class="input" placeholder="e.g. JD001" />
+            </div>
+          </div>
+          <h3>Paste JD Text</h3>
+          <textarea id="jd-text-input" class="textarea" placeholder="Paste job description here...
+
+Example:
+Backend Developer
+
+About the Role:
+We are looking for an experienced Backend Developer to join our team.
+
+Required Skills:
+Java, Spring Boot, MySQL, Docker, Kafka, REST API, Microservices
+
+Nice to Have:
+Kubernetes, AWS, Redis, MongoDB
+
+Experience: 3-5 years
+Salary: 12 LPA"></textarea>
+          <button class="btn btn-primary" onclick="parseJDText()" id="btn-parse-jd-text">Parse Job Description</button>
+        </div>
+      </div>
+
+      <!-- JDs List -->
+      <div class="section-header" style="margin-top: 3rem;">
+        <h2>Stored Job Descriptions</h2>
+        <button class="btn btn-ghost" onclick="loadJDs()" id="btn-refresh-jds">↻ Refresh</button>
+      </div>
+      <div class="cards-grid" id="jds-list">
+        <div class="empty-state">
+          <div class="empty-icon">💼</div>
+          <p>No job descriptions added yet. Upload or paste a JD above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ MATCH & ANALYZE TAB ═══ -->
+    <section class="tab-content" id="tab-match">
+      <div class="section-header">
+        <h2>🎯 Match & Analyze</h2>
+        <p>Select a resume and match it against job descriptions</p>
+      </div>
+
+      <div class="match-controls">
+        <div class="form-group">
+          <label for="match-resume-select">Select Resume</label>
+          <select id="match-resume-select" class="select">
+            <option value="">— Choose a resume —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="match-jd-select">Select JDs (optional — leave empty for all)</label>
+          <select id="match-jd-select" class="select" multiple>
+          </select>
+          <small class="form-hint">Hold Ctrl/Cmd to select multiple. Leave empty to match against all.</small>
+        </div>
+        <button class="btn btn-primary btn-lg btn-full" onclick="runMatch()" id="btn-run-match">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Run Match Analysis
+        </button>
+      </div>
+
+      <!-- Match Results -->
+      <div id="match-results" class="match-results"></div>
+
+      <!-- JSON Output -->
+      <div id="json-output-section" class="json-output-section" style="display:none;">
+        <div class="section-header">
+          <h2>📋 Output JSON</h2>
+          <button class="btn btn-ghost" onclick="copyJSON()" id="btn-copy-json">📋 Copy</button>
+        </div>
+        <pre class="json-block" id="json-output"></pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Toast Container ─────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ─── Loading Overlay ─────────────────────────────────────── -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <p>Processing...</p>
+    </div>
+  </div>
+
+  <!-- ─── Detail Modal ────────────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()" id="btn-modal-close">&times;</button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
