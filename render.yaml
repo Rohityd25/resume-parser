@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: resume-parser
+    runtime: node
+    buildCommand: npm install && npm run seed
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    disk:
+      name: resume-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
