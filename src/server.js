@@ -42,13 +42,29 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: err.message || "Internal server error" });
 });
 
+// ─── Auto-seed if DB is empty (for ephemeral platforms like Railway) ─
+function autoSeed() {
+    try {
+        const db = require("./db/database");
+        const jds = db.listJDs();
+        if (jds.length === 0) {
+            console.log("📦 No JDs found — auto-seeding sample data...");
+            require("./seed");
+        }
+    } catch (err) {
+        console.error("Auto-seed warning:", err.message);
+    }
+}
+
 // ─── Start Server ────────────────────────────────────────────────
 app.listen(PORT, () => {
+    autoSeed();
     console.log(`
-
-   🔍  Resume Parser & Job Matcher                              
-   Server running on http://localhost:${PORT}              
-   API docs:        http://localhost:${PORT}/api/health     
+╔═══════════════════════════════════════════════════════════╗
+║   🔍  Resume Parser & Job Matcher                         ║
+║   Server running on http://localhost:${PORT}                ║
+║   100% Rule-Based NLP • No LLMs                          ║
+╚═══════════════════════════════════════════════════════════╝
   `);
 });
 
