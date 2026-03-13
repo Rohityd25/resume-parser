@@ -1,7 +1,13 @@
 node_modules/
-data/
 uploads/
 *.db
 .env
 .DS_Store
 Thumbs.db
+
+# Ignore only root-level data directory (SQLite DB storage), NOT src/data/
+/data/
+
+# Explicitly track the skills dictionary inside src/
+!src/data/
+!src/data/**
