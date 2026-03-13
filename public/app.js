@@ -542,3 +542,241 @@ document.addEventListener("DOMContentLoaded", () => {
     setupUploadArea("jd-upload-area", "jd-file-input", uploadJD);
     loadDashboardStats();
 });
+
+// ─── Web Scraper ──────────────────────────────────────────────
+
+/** Holds the jobs returned from the last scrape so we can import them */
+let scrapedJobs = [];
+/** Set of selected job indices */
+let selectedScrapeIndices = new Set();
+
+/**
+ * Fetch live jobs from the chosen source API.
+ */
+async function scrapeJobs() {
+    const query  = document.getElementById("scrape-query").value.trim();
+    const source = document.getElementById("scrape-source").value;
+    const limit  = document.getElementById("scrape-limit").value;
+    const btn    = document.getElementById("btn-scrape");
+    const status = document.getElementById("scrape-status");
+
+    btn.disabled = true;
+    btn.textContent = "Fetching…";
+    status.innerHTML = `<div class="scrape-loading">🔄 Scraping live job listings from ${source === "all" ? "all sources" : source}…</div>`;
+
+    // Clear previous
+    scrapedJobs = [];
+    selectedScrapeIndices.clear();
+    document.getElementById("scrape-results").innerHTML = "";
+    document.getElementById("scrape-actions-bar").style.display = "none";
+
+    try {
+        const qs = new URLSearchParams({ limit });
+        if (query) qs.set("q", query);
+
+        const endpoint = `/scrape/${source}?${qs.toString()}`;
+        const result = await apiGet(endpoint);
+
+        scrapedJobs = result.data || [];
+        status.innerHTML = `<div class="scrape-info">✅ Found <strong>${scrapedJobs.length}</strong> job(s)${query ? ` matching "<em>${escHtml(query)}</em>"` : ""}</div>`;
+        renderScrapedJobs(scrapedJobs);
+    } catch (err) {
+        status.innerHTML = `<div class="scrape-error">❌ ${escHtml(err.message)}</div>`;
+        showToast(`Scrape failed: ${err.message}`, "error");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg> Fetch Jobs`;
+    }
+}
+
+/**
+ * Scrape an arbitrary HTML URL via POST /api/scrape/html
+ */
+async function scrapeURL() {
+    const url    = document.getElementById("scrape-url").value.trim();
+    const btn    = document.getElementById("btn-scrape-url");
+    const status = document.getElementById("scrape-status");
+
+    if (!url || !url.startsWith("http")) {
+        showToast("Please enter a valid URL starting with http(s)://", "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Scraping…";
+    status.innerHTML = `<div class="scrape-loading">🔄 Scraping HTML from ${escHtml(url)}…</div>`;
+    scrapedJobs = [];
+    selectedScrapeIndices.clear();
+    document.getElementById("scrape-actions-bar").style.display = "none";
+
+    try {
+        const res = await fetch(`${API_BASE}/scrape/html`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+        });
+        if (!res.ok) throw new Error((await res.json()).error || res.statusText);
+        const result = await res.json();
+
+        scrapedJobs = result.data || [];
+        status.innerHTML = `<div class="scrape-info">✅ Extracted <strong>${scrapedJobs.length}</strong> job listing(s) from <a href="${escHtml(url)}" target="_blank" style="color:var(--accent-cyan)">${escHtml(new URL(url).hostname)}</a></div>`;
+        renderScrapedJobs(scrapedJobs);
+    } catch (err) {
+        status.innerHTML = `<div class="scrape-error">❌ ${escHtml(err.message)}</div>`;
+        showToast(`HTML scrape failed: ${err.message}`, "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "🔗 Scrape URL";
+    }
+}
+
+/**
+ * Render the scraped job cards with checkboxes for selection.
+ */
+function renderScrapedJobs(jobs) {
+    const container = document.getElementById("scrape-results");
+
+    if (!jobs.length) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>No jobs found. Try a different keyword or source.</p></div>`;
+        return;
+    }
+
+    container.innerHTML = jobs.map((job, i) => {
+        const sourceBadgeColor = {
+            "RemoteOK": "#22c55e",
+            "Arbeitnow": "#3b82f6",
+            "Himalayas": "#a855f7",
+        }[job.source] || "#64748b";
+
+        const tags = (job.tags || []).slice(0, 8);
+
+        return `
+        <div class="data-card scrape-card" id="scrape-card-${i}" onclick="toggleScrapeSelect(${i})">
+          <div class="scrape-card-check">
+            <input type="checkbox" id="scrape-cb-${i}" class="scrape-checkbox" onclick="event.stopPropagation();toggleScrapeSelect(${i})" />
+          </div>
+          <div class="card-header">
+            <div style="flex:1; min-width:0">
+              <div class="card-title" style="word-break:break-word">${escHtml(job.title)}</div>
+              <div class="card-subtitle">
+                🏢 ${escHtml(job.company || "Unknown")} &nbsp;•&nbsp; 📍 ${escHtml(job.location || "Remote")}
+                ${job.salary ? `&nbsp;•&nbsp; 💰 ${escHtml(job.salary)}` : ""}
+              </div>
+            </div>
+            <span class="source-badge" style="background:${sourceBadgeColor}22; color:${sourceBadgeColor}; border:1px solid ${sourceBadgeColor}44">
+              ${escHtml(job.source)}
+            </span>
+          </div>
+          <div class="card-body">
+            ${tags.length ? `<div class="skills-tags">${tags.map(t => `<span class="skill-tag">${escHtml(t)}</span>`).join("")}</div>` : ""}
+            ${job.description ? `<p class="scrape-desc">${escHtml(job.description.substring(0, 180))}${job.description.length > 180 ? "…" : ""}</p>` : ""}
+          </div>
+          <div class="card-actions">
+            ${job.url ? `<a class="btn btn-ghost btn-sm" href="${escHtml(job.url)}" target="_blank" onclick="event.stopPropagation()">🔗 View Listing</a>` : ""}
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); importSingleJob(${i})">⬇ Import as JD</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    document.getElementById("scrape-actions-bar").style.display = "flex";
+    updateSelectionCount();
+}
+
+/**
+ * Toggle checkbox selection for a scraped card.
+ */
+function toggleScrapeSelect(i) {
+    const card = document.getElementById(`scrape-card-${i}`);
+    const cb   = document.getElementById(`scrape-cb-${i}`);
+
+    if (selectedScrapeIndices.has(i)) {
+        selectedScrapeIndices.delete(i);
+        card.classList.remove("scrape-selected");
+        cb.checked = false;
+    } else {
+        selectedScrapeIndices.add(i);
+        card.classList.add("scrape-selected");
+        cb.checked = true;
+    }
+    updateSelectionCount();
+}
+
+function selectAllScraped() {
+    scrapedJobs.forEach((_, i) => {
+        selectedScrapeIndices.add(i);
+        const card = document.getElementById(`scrape-card-${i}`);
+        const cb   = document.getElementById(`scrape-cb-${i}`);
+        if (card) card.classList.add("scrape-selected");
+        if (cb)   cb.checked = true;
+    });
+    updateSelectionCount();
+}
+
+function clearScrapedSelection() {
+    selectedScrapeIndices.forEach(i => {
+        const card = document.getElementById(`scrape-card-${i}`);
+        const cb   = document.getElementById(`scrape-cb-${i}`);
+        if (card) card.classList.remove("scrape-selected");
+        if (cb)   cb.checked = false;
+    });
+    selectedScrapeIndices.clear();
+    updateSelectionCount();
+}
+
+function updateSelectionCount() {
+    document.getElementById("scrape-selected-count").textContent =
+        `${selectedScrapeIndices.size} selected`;
+}
+
+/**
+ * Import a single job card directly.
+ */
+async function importSingleJob(i) {
+    const job = scrapedJobs[i];
+    if (!job) return;
+    showLoading();
+    try {
+        const res = await fetch(`${API_BASE}/scrape/import`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jobs: [job] }),
+        });
+        if (!res.ok) throw new Error((await res.json()).error || res.statusText);
+        const result = await res.json();
+        hideLoading();
+        showToast(`✅ Imported: "${job.title}" as JD`, "success");
+        loadDashboardStats();
+    } catch (err) {
+        hideLoading();
+        showToast(`Import failed: ${err.message}`, "error");
+    }
+}
+
+/**
+ * Import all selected scrape results into the JD database.
+ */
+async function importSelected() {
+    if (!selectedScrapeIndices.size) {
+        showToast("Select at least one job to import.", "error");
+        return;
+    }
+
+    const jobs = [...selectedScrapeIndices].map(i => scrapedJobs[i]).filter(Boolean);
+    showLoading();
+    try {
+        const res = await fetch(`${API_BASE}/scrape/import`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jobs }),
+        });
+        if (!res.ok) throw new Error((await res.json()).error || res.statusText);
+        const result = await res.json();
+        hideLoading();
+        showToast(`✅ Imported ${result.imported.length} job(s) as JDs!`, "success");
+        clearScrapedSelection();
+        loadDashboardStats();
+    } catch (err) {
+        hideLoading();
+        showToast(`Import failed: ${err.message}`, "error");
+    }
+}

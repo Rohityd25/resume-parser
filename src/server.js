@@ -25,6 +25,10 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 const apiRoutes = require("./routes/api");
 app.use("/api", apiRoutes);
 
+// ─── Scraper Routes ──────────────────────────────────────────────
+const scraperRoutes = require("./routes/scraper");
+app.use("/api/scrape", scraperRoutes);
+
 // ─── Catch-all to serve index.html for SPA ───────────────────────
 app.use((req, res, next) => {
     if (req.method === "GET" && !req.path.startsWith("/api")) {

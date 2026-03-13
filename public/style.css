@@ -1119,3 +1119,136 @@ body {
   .nav-tab { flex-direction: column; font-size: 0.7rem; padding: 6px 8px; gap: 3px; }
   .main { padding-bottom: 80px; }
 }
+
+/* ─── Job Scraper Tab ─────────────────────────────────────── */
+.scrape-controls {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.scrape-search-row,
+.html-scrape-row {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.scrape-search-row .form-group,
+.html-scrape-row  .form-group { margin-bottom: 0; }
+
+/* Status / feedback banners */
+.scrape-status { margin-bottom: var(--space-lg); }
+
+.scrape-loading,
+.scrape-info,
+.scrape-error {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+}
+
+.scrape-loading {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent-blue);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  animation: pulse 1.5s ease infinite;
+}
+
+.scrape-info {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.scrape-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Bulk actions toolbar */
+.scrape-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+#scrape-selected-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-right: auto;
+}
+
+/* Scrape job card enhancements */
+.scrape-card {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.scrape-card:hover {
+  border-color: var(--border-active);
+}
+
+.scrape-card.scrape-selected {
+  border-color: var(--accent-blue);
+  background: rgba(99, 102, 241, 0.07);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.scrape-card-check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+}
+
+.scrape-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+/* Source badge */
+.source-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 28px;  /* space for the checkbox */
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Short description preview */
+.scrape-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-top: var(--space-sm);
+  border-left: 2px solid var(--border-color);
+  padding-left: var(--space-sm);
+}
+
